@@ -18,31 +18,35 @@
         </div>
       </div>
     </div>
-    <div class="shopcart-list" v-show='isShow' >
-      <div class="list-header">
-        <h1 class="title">购物车</h1>
-        <span class="empty">清空</span>
+    <transition name='move'>
+      <div class="shopcart-list" v-show='listShow' >
+        <div class="list-header">
+          <h1 class="title">购物车</h1>
+          <span class="empty" @click="clearCart">清空</span>
+        </div>
+        <div class="list-content">
+          <ul>
+            <li class="food" v-for="(food,index) in cartFoods" :key="index">
+              <span class="name">{{food.name}}</span>
+              <div class="price">
+                <span>￥{{food.price}}</span>
+              </div>
+              <div class="cartcontrol-wrapper">
+                  <CartControl :food='food'/>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="list-content">
-        <ul>
-          <li class="food" v-for="(food,index) in cartFoods" :key="index">
-            <span class="name">{{food.name}}</span>
-            <div class="price">
-              <span>￥{{food.price}}</span>
-            </div>
-            <div class="cartcontrol-wrapper">
-                <CartControl :food='food'/>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
+     </transition>
   </div>
-  <div class="list-mask" v-show="isShow" @click="toggleShow"></div>
+  <div class="list-mask" v-show="listShow" @click="toggleShow"></div>
   </div>
 </template>
 
 <script>
+import {MessageBox} from 'mint-ui'
+import BScroll from 'better-scroll'
 import {mapState,mapGetters} from 'vuex'
 import CartControl from '../../components/CartControl/CartControl'
 export default {
@@ -72,11 +76,43 @@ export default {
             }else{
                 return '结算'
             }
+        },
+        
+        listShow(){
+          // 如果总数量为0 直接不显示
+          if (this.totalCount==0) {
+            this.isShow = false
+            return false
+          }
+          
+          if (this.isShow) {
+            this.$nextTick(()=>{
+              // 实现BScroll的实例是一个单利
+              if (!this.scroll) {
+                new BScroll('.list-content',{
+                  click:true
+                })
+              }else{
+                this.scroll.refresh() //让滚动调刷新下  重新计算内容的高度
+              }
+             
+            })
+          }
+          return this.isShow
         }
     },
     methods: {
         toggleShow(){
+          // 只有当总数量大于0式切换
+          if (this.totalCount>0) {
             this.isShow = !this.isShow
+            
+          }
+        },
+        clearCart(){
+          MessageBox.confirm('确定清空购物车么？').then(action =>{
+            this.$store.dispatch('clearCart')
+          },()=>{});
         }
     },
 };
