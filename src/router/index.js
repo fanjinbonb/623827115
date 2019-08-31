@@ -8,10 +8,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Msite from '../views/MSite/MSite.vue'
-import Search from '../views/Search/Search.vue'
-import Order from '../views/Order/Order.vue'
-import Profile from '../views/Profile/Profile.vue'
+// import Msite from '../views/MSite/MSite.vue'
+// import Search from '../views/Search/Search.vue'
+// import Order from '../views/Order/Order.vue'
+// import Profile from '../views/Profile/Profile.vue'
 import Login from '../views/Login/Login.vue'
 import Shop from '../views/Shop/Shop'
 import ShopGoods from '../views/Shop/ShopGoods/ShopGoods'
@@ -29,28 +29,28 @@ export default new VueRouter({
         },
         {
             path:"/msite",
-            component:Msite,
+            component:()=>import('../views/MSite/MSite.vue'),
             meta:{
                 showFooter:true
             }
         },
         {
             path:"/search",
-            component:Search,
+            component:() =>import('../views/Search/Search.vue'),
             meta:{
                 showFooter:true
             }
         },
         {
             path:"/order",
-            component:Order,
+            component:()=>import('../views/Order/Order.vue'),
             meta:{
                 showFooter:true
             }
         },
         {
             path:"/profile",
-            component:Profile,
+            component:()=>import('../views/Profile/Profile.vue'),
             meta:{
                 showFooter:true
             }
